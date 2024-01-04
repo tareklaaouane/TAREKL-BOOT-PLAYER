@@ -2,44 +2,67 @@ const {SlashCommandBuilder} = require("@discordjs/builders");
 const {MessageEmbed} = require("discord.js");
 const {QueryType} = require("discord-player");
 
+/tmezzek playlista <mezzika>
+
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("play")
-    .setDescription("Plays a song")
-    .addStringOption(option=>{
-      option.setName("song")
-        .setDescription("The song to play")
+    .setName("tmezzek")
+    .setDescription("tle9 chi mezzika")
+    .addSubcommand(Subcommand=>{
+      Subcommand.setName("9allab 3la mezzika")
+      .setDescription("hana kan9allab 3la mezzika ")
+      .addStringOption(Option => {
+        Option.setName("smia dial oughnia")
+        .setDescription("kat9lleb 3laaaa ")
         .setRequired(true)
+      })
     })
- /* async execute(interaction){
-    await interaction.deferReply();
-    const query = interaction.options.getString("song");
-    const queue = interaction.client.Player.createQueue(interaction.guild,{
-      metadata:{
-        channel:interaction.channel
+    .addSubcommand(Subcommand=>{
+      Subcommand.setName("playlista")
+      .setDescription("hana anmezzkek mn playlist dial youtib ")
+      .addStringOption(Option => {
+        Option.setName("lien dial mzzika")
+        .setDescription("lien dial playlist ")
+        .setRequired(true)
+      })
+    })
+    .addSubcommand(Subcommand=>{
+      Subcommand.setName("mezzika")
+      .setDescription("hana kan9allab 3la mezzika ")
+      .addStringOption(Option => {
+        Option.setName("lien dial mzzika")
+        .setDescription("lien dial playlist ")
+        .setRequired(true)
+      })
+    }),
+    execute : async ({client,interaction})=>{
+      if (!interaction.member.voice.channel) {
+        await interaction.reply("khass tkoun f chi voice channel bash tmezzek a sat");
+        return;
       }
-    });
-    try {
-      if(!queue.connection) await queue.connect(interaction.member.voice.channel);
-    } catch {
-      queue.destroy();
-      return await interaction.followUp({content:"Could not join your voice channel!",ephemeral:true});
+      const queue=await client.player.createQueue(interaction.guild);
+      if(!queue.connection)await queue.connect(interation.member.voice.channel)
+
+      let embed = new MessageEmbed();
+      if (interaction.options.getSubcommand() === "mezzika")
+      {
+        let url = interaction.options.getString("url");
+        const result = await client.player.search(url,{
+          requestedBy:interaction.user,
+          searchEngine:QueryType.AUTO,
+
+        });
+        if(result.tracks.length === 0){
+          await interation.replay("makayna hta oughnia bhal hakka awjeh tobba");
+          return
+        }
+
+        const song = result.tracks[0]
+        await queue.addTrack(song);
+        embed.setDescription(`rah tzadet **[${song.title}](${song.url})** lqueue`)
+        .setThumbnail(song.thumbnail)
+        .setFooter({text:`chhal fih: ${song.duration}`});
+        }
+      }
     }
-    await interaction.followUp({content:`Searching 🔎 \`${query}\``,ephemeral:true});
-    const searchResult = await interaction.client.Player.search(query,{
-      requestedBy:interaction.user,
-      searchEngine:QueryType.AUTO
-    });
-    if(!searchResult || !searchResult.tracks.length) return await interaction.followUp({content:"No results were found!",ephemeral:true});
-    const track = searchResult.tracks[0];
-    queue.addTrack(track);
-    if(!queue.playing) await queue.play();
-    const embed = new MessageEmbed()
-      .setTitle("Now Playing 🎶")
-      .setDescription(`[${track.title}](${track.url})`)
-      .setThumbnail(track.thumbnail)
-      .setColor("#FF0000")
-      .setFooter(`Requested by ${track.requestedBy.tag}`,track.requestedBy.displayAvatarURL({dynamic:true}));
-    await interaction.followUp({embeds:[embed]});
-  }*/
-};
+    
