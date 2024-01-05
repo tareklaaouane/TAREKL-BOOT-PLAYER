@@ -11,24 +11,24 @@ module.exports = {
 				.setName("9lleb")
 				.setDescription("ana kan9allab 3la mezzika tsenna")
 				.addStringOption(option =>
-					option.setName("searchterms").setDescription("search keywords").setRequired(true)
+					option.setName("3lash kat9alleb").setDescription("ana kan9alleb").setRequired(true)
 				)
 		)
         .addSubcommand(subcommand =>
 			subcommand
-				.setName("playlist")
-				.setDescription("Plays a playlist from YT")
-				.addStringOption(option => option.setName("url").setDescription("the playlist's url").setRequired(true))
+				.setName("playlista")
+				.setDescription("kheddem playlista mn youtibb")
+				.addStringOption(option => option.setName("lien dial playlista").setDescription("lien dial playlista").setRequired(true))
 		)
 		.addSubcommand(subcommand =>
 			subcommand
-				.setName("song")
-				.setDescription("Plays a single song from YT")
-				.addStringOption(option => option.setName("url").setDescription("the song's url").setRequired(true))
+				.setName("mzzika")
+				.setDescription("kheddem mzika wahda mn youtib")
+				.addStringOption(option => option.setName("lien dial mzzika").setDescription("lien dial mzzika").setRequired(true))
 		),
 	execute: async ({ client, interaction }) => {
         // Make sure the user is inside a voice channel
-		if (!interaction.member.voice.channel) return interaction.reply("You need to be in a Voice Channel to play a song.");
+		if (!interaction.member.voice.channel) return interaction.reply("khass tkoun fchi channel a3chiri.");
 
         // Create a play queue for the server
 		const queue = await client.player.createQueue(interaction.guild);
@@ -38,7 +38,7 @@ module.exports = {
 
 		let embed = new MessageEmbed()
 
-		if (interaction.options.getSubcommand() === "song") {
+		if (interaction.options.getSubcommand() === "mzzika") {
             let url = interaction.options.getString("url")
             
             // Search for the song using the discord-player
@@ -49,18 +49,18 @@ module.exports = {
 
             // finish if no tracks were found
             if (result.tracks.length === 0)
-                return interaction.reply("No results")
+                return interaction.reply("walo a sat")
 
             // Add the track to the queue
             const song = result.tracks[0]
             await queue.addTrack(song)
             embed
-                .setDescription(`**[${song.title}](${song.url})** has been added to the Queue`)
+                .setDescription(`**[${song.title}](${song.url})** tzadet lQueue`)
                 .setThumbnail(song.thumbnail)
                 .setFooter({ text: `Duration: ${song.duration}`})
 
 		}
-        else if (interaction.options.getSubcommand() === "playlist") {
+        else if (interaction.options.getSubcommand() === "playlista") {
 
             // Search for the playlist using the discord-player
             let url = interaction.options.getString("url")
@@ -70,17 +70,17 @@ module.exports = {
             })
 
             if (result.tracks.length === 0)
-                return interaction.reply(`No playlists found with ${url}`)
+                return interaction.reply(`walo a sat ${url}`)
             
             // Add the tracks to the queue
             const playlist = result.playlist
             await queue.addTracks(result.tracks)
             embed
-                .setDescription(`**${result.tracks.length} songs from [${playlist.title}](${playlist.url})** have been added to the Queue`)
+                .setDescription(`**${result.tracks.length} oughnia mn [${playlist.title}](${playlist.url})** tzadet lQueue`)
                 .setThumbnail(playlist.thumbnail)
 
 		} 
-        else if (interaction.options.getSubcommand() === "search") {
+        else if (interaction.options.getSubcommand() === "9lleb") {
 
             // Search for the song using the discord-player
             let url = interaction.options.getString("searchterms")
@@ -97,7 +97,7 @@ module.exports = {
             const song = result.tracks[0]
             await queue.addTrack(song)
             embed
-                .setDescription(`**[${song.title}](${song.url})** has been added to the Queue`)
+                .setDescription(`**[${song.title}](${song.url})** tzadet lQueue`)
                 .setThumbnail(song.thumbnail)
                 .setFooter({ text: `Duration: ${song.duration}`})
 		}
